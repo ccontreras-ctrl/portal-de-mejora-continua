@@ -58,7 +58,7 @@ interface AppContextType {
   setPage: (page: string) => void;
   selectTicket: (ticketId: string | null) => void;
   updateTicket: (updatedTicket: Partial<Ticket>) => Promise<void>;
-  addTicket: (newTicket: Omit<Ticket, 'id' | 'createdAt'>) => Promise<void>;
+  addTicket: (newTicket: Omit<Ticket, 'id' | 'createdAt'>, file?: File | null) => Promise<void>;
   getComments: (ticketId: string) => Promise<Comment[]>;
   addComment: (comment: Omit<Comment, 'id' | 'createdAt'>) => Promise<void>;
   updateUserProfile: (userId: string, updates: Partial<User>) => Promise<void>;
@@ -231,13 +231,59 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (error) console.error("Error updating ticket:", error);
   }, []);
 
-  const addTicket = useCallback(async (newTicketData: Omit<Ticket, 'id' | 'createdAt'>) => {
+  const addTicket = useCallback(async (newTicketData: Omit<Ticket, 'id' | 'createdAt'>, file?: File | null) => {
     if (!supabase) return;
     const newTicketId = `MC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const ticketToInsert = { ...newTicketData, id: newTicketId };
+    let driveUrl = '#';
+
+    // 1. Upload to Drive if file exists
+    if (file) {
+      console.log('📤 AppContext: Subiendo archivo a Drive...');
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('ticketId', newTicketId);
+
+      try {
+        const response = await fetch(`${window.location.origin}/api/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (data.url) {
+          console.log('✅ AppContext: Archivo subido con éxito:', data.url);
+          driveUrl = data.url;
+        }
+      } catch (err) {
+        console.error("❌ AppContext: Error subiendo archivo:", err);
+      }
+    }
+
+    // 2. Insert into Supabase
+    const ticketToInsert = { ...newTicketData, id: newTicketId, driveFolderUrl: driveUrl };
     const { error } = await supabase.from('tickets').insert(toSupabase(ticketToInsert));
-    if (error) console.error("Error adding ticket:", error);
-  }, []);
+
+    if (error) {
+      console.error("❌ AppContext: Error añadiendo ticket:", error);
+    } else {
+      console.log('✅ AppContext: Ticket creado en base de datos.');
+
+      // 3. Trigger Email Notification
+      try {
+        console.log('📧 AppContext: Disparando notificación por correo...');
+        await fetch(`${window.location.origin}/api/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticket: { ...ticketToInsert, createdAt: new Date().toISOString() },
+            type: 'created',
+            recipientEmail: newTicketData.aprobadorEmail || 'ccontreras@suzuval.cl'
+          })
+        });
+      } catch (notifyErr) {
+        console.error("❌ AppContext: Error enviando notificación:", notifyErr);
+      }
+    }
+  }, [user]);
 
   const getComments = useCallback(async (ticketId: string): Promise<Comment[]> => {
     if (!supabase) return [];
