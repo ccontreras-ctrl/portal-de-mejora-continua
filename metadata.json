@@ -1,0 +1,5 @@
+{
+  "name": "Portal de Mejora Continua",
+  "description": "Un portal web interno para gestionar requerimientos de mejora continua (tickets), con seguimiento de principio a fin, herramientas de análisis y reportes.",
+  "requestFramePermissions": []
+}

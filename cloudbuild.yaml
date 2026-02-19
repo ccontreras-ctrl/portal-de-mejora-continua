@@ -1,0 +1,14 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '--no-cache',
+    '--build-arg', 'VITE_SUPABASE_URL=${_VITE_SUPABASE_URL}',
+    '--build-arg', 'VITE_SUPABASE_ANON_KEY=${_VITE_SUPABASE_ANON_KEY}',
+    '--build-arg', 'VITE_GEMINI_API_KEY=${_VITE_GEMINI_API_KEY}',
+    '--build-arg', 'VITE_ALLOWED_DOMAIN=${_VITE_ALLOWED_DOMAIN}',
+    '-t', 'gcr.io/$PROJECT_ID/portal-de-mejora-continua',
+    '.'
+  ]
+images:
+- 'gcr.io/$PROJECT_ID/portal-de-mejora-continua'

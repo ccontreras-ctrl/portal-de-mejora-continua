@@ -1,0 +1,90 @@
+﻿
+> portal-mejora-continua@1.0.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+node.exe : 
+En línea: 1 Carácter: 1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (:String  
+  ) [], RemoteException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+/index.css doesn't exist at 
+build time, it will remain 
+unchanged to be resolved at 
+runtime
+transforming...
+[32mÔ£ô[39m 6 modules transformed.
+[31mx[39m Build failed in 
+148ms
+[31merror during build:
+[31m[vite]: Rollup failed 
+to resolve import 
+"@supabase/supabase-js" from 
+"C:/Proyectos/Portal mejora c
+ontinua/portal-de-mejora-cont
+inua/context/AppContext.tsx".
+This is most likely 
+unintended because it can 
+break your application at 
+runtime.
+If you do want to 
+externalize this module 
+explicitly add it to
+`build.rollupOptions.external
+`[31m
+    at viteWarn (file:///C:/P
+royectos/Portal%20mejora%20co
+ntinua/portal-de-mejora-conti
+nua/node_modules/vite/dist/no
+de/chunks/dep-BK3b2jBa.js:658
+55:17)
+    at onwarn (file:///C:/Pro
+yectos/Portal%20mejora%20cont
+inua/portal-de-mejora-continu
+a/node_modules/@vitejs/plugin
+-react/dist/index.js:90:7)
+    at onRollupWarning (file:
+///C:/Proyectos/Portal%20mejo
+ra%20continua/portal-de-mejor
+a-continua/node_modules/vite/
+dist/node/chunks/dep-BK3b2jBa
+.js:65885:5)
+    at onwarn (file:///C:/Pro
+yectos/Portal%20mejora%20cont
+inua/portal-de-mejora-continu
+a/node_modules/vite/dist/node
+/chunks/dep-BK3b2jBa.js:65550
+:7)
+    at file:///C:/Proyectos/P
+ortal%20mejora%20continua/por
+tal-de-mejora-continua/node_m
+odules/rollup/dist/es/shared/
+node-entry.js:20972:13
+    at Object.logger [as 
+onLog] (file:///C:/Proyectos/
+Portal%20mejora%20continua/po
+rtal-de-mejora-continua/node_
+modules/rollup/dist/es/shared
+/node-entry.js:22945:9)
+    at ModuleLoader.handleInv
+alidResolvedId (file:///C:/Pr
+oyectos/Portal%20mejora%20con
+tinua/portal-de-mejora-contin
+ua/node_modules/rollup/dist/e
+s/shared/node-entry.js:21689:
+26)
+    at file:///C:/Proyectos/P
+ortal%20mejora%20continua/por
+tal-de-mejora-continua/node_m
+odules/rollup/dist/es/shared/
+node-entry.js:21647:26[39m

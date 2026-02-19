@@ -1,0 +1,11 @@
+runtime: nodejs20
+
+env_variables:
+  VITE_GEMINI_API_KEY: "AIzaSyDekvHEDS6dVVeCb0k4liu6mdbLqJVKoAo"
+  VITE_SUPABASE_URL: "https://dqpxgwsdfclmztslstzh.supabase.co"
+  VITE_SUPABASE_ANON_KEY: "sb_publishable_o_849Y7sluUJzXRYz8THNw_1Q6FP8nI"
+  VITE_ALLOWED_DOMAIN: "suzuval.cl"
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10

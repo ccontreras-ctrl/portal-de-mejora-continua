@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Supabase - Portal Mejora Continua</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #002279 0%, #18bee6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #002279;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .step h2 {
+            color: #002279;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .step p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #002279 0%, #18bee6 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px 10px 10px 0;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sql-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .sql-container pre {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .copy-button:hover {
+            background: #218838;
+        }
+
+        .copy-button.copied {
+            background: #20c997;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Configuración de Supabase</h1>
+            <p>Portal de Mejora Continua - Suzuval</p>
+        </div>
+
+        <div class="content">
+            <div class="alert">
+                <strong>⚠️ VERSIÓN ACTUALIZADA:</strong> Este código SQL corrige el error "publication already exists".
+            </div>
+
+            <div class="step">
+                <h2>📋 Paso 1: Abrir el SQL Editor de Supabase</h2>
+                <a href="https://app.supabase.com/project/dqpxgwsdfclmztslstzh/sql/new" target="_blank" class="button">
+                    🌐 Abrir SQL Editor
+                </a>
+            </div>
+
+            <div class="step">
+                <h2>📝 Paso 2: Copiar el Esquema SQL Actualizado</h2>
+                <div class="sql-container">
+                    <button class="copy-button" onclick="copySQLToClipboard()">📋 Copiar SQL</button>
+                    <pre id="sqlCode">-- 1. Habilitar la extensión pgcrypto para gen_random_uuid() si no está habilitada
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- 2. Crear tipos ENUM para roles y estados de tickets (Manejo de duplicados)
+DO $$ BEGIN
+    CREATE TYPE public.role_enum AS ENUM ('Solicitante', 'Jefe Directo', 'Mejora Continua', 'Administrador');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE public.ticket_status_enum AS ENUM ('Borrador', 'En revisión jefe', 'Aprobado', 'Rechazado', 'En análisis', 'En desarrollo', 'En pruebas/validación', 'Implementado', 'Cerrado');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE public.urgency_enum AS ENUM ('Baja', 'Media', 'Alta');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- 3. Crear la tabla de perfiles de usuario
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  role public.role_enum NOT NULL DEFAULT 'Solicitante',
+  manager VARCHAR(255) -- Se mantiene como email por simplicidad, podría normalizarse a un ID
+);
+COMMENT ON TABLE public.profiles IS 'Stores public profile information for each user.';
+COMMENT ON COLUMN public.profiles.id IS 'References the internal auth.users table.';
+
+-- 4. Crear la tabla de tickets
+CREATE TABLE IF NOT EXISTS public.tickets (
+  id TEXT PRIMARY KEY,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  impacto TEXT,
+  area TEXT,
+  sucursal TEXT,
+  categoria TEXT,
+  urgencia public.urgency_enum NOT NULL,
+  prioridad public.urgency_enum NOT NULL,
+  status public.ticket_status_enum NOT NULL DEFAULT 'Borrador',
+  drive_folder_url TEXT,
+  ishikawa_data JSONB,
+  solicitante_id UUID NOT NULL REFERENCES public.profiles(id),
+  aprobador_email TEXT, -- Email del jefe directo para aprobación
+  asignado_a_id UUID REFERENCES public.profiles(id)
+);
+COMMENT ON TABLE public.tickets IS 'Stores all the continuous improvement tickets.';
+
+-- 5. Crear la tabla de comentarios
+CREATE TABLE IF NOT EXISTS public.comments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  content TEXT NOT NULL,
+  ticket_id TEXT NOT NULL REFERENCES public.tickets(id) ON DELETE CASCADE,
+  author_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE
+);
+COMMENT ON TABLE public.comments IS 'Stores comments and log entries for each ticket.';
+
+-- 6. Configurar Políticas de Seguridad (Row Level Security - RLS)
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.tickets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+
+-- Borrar políticas anteriores para evitar duplicados y recrearlas
+DROP POLICY IF EXISTS "Allow authenticated users to read profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Allow users to update their own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Allow authenticated users to read all tickets" ON public.tickets;
+DROP POLICY IF EXISTS "Allow users to create tickets" ON public.tickets;
+DROP POLICY IF EXISTS "Allow assigned users or admins to update tickets" ON public.tickets;
+DROP POLICY IF EXISTS "Allow authenticated users to read comments" ON public.comments;
+DROP POLICY IF EXISTS "Allow authenticated users to insert comments" ON public.comments;
+
+-- Políticas para la tabla 'profiles'
+CREATE POLICY "Allow authenticated users to read profiles" ON public.profiles FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Allow users to update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Políticas para la tabla 'tickets'
+CREATE POLICY "Allow authenticated users to read all tickets" ON public.tickets FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Allow users to create tickets" ON public.tickets FOR INSERT TO authenticated WITH CHECK (auth.uid() = solicitante_id);
+CREATE POLICY "Allow assigned users or admins to update tickets" ON public.tickets FOR UPDATE TO authenticated USING (
+  (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('Mejora Continua', 'Administrador')
+  OR auth.uid() = asignado_a_id
+  OR aprobador_email = (SELECT email FROM public.profiles WHERE id = auth.uid())
+) WITH CHECK (true);
+
+-- Políticas para la tabla 'comments'
+CREATE POLICY "Allow authenticated users to read comments" ON public.comments FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Allow authenticated users to insert comments" ON public.comments FOR INSERT TO authenticated WITH CHECK (auth.uid() = author_id);
+
+
+-- 7. Configurar Publicaciones para actualizaciones en tiempo real
+DO $$ BEGIN
+    CREATE PUBLICATION supabase_realtime FOR ALL TABLES;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.profiles, public.tickets, public.comments;</pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <h2>▶️ Paso 3: Ejecutar el SQL</h2>
+                <p>En Supabase: Borra cualquier código anterior del editor y pega este nuevo código. Luego haz clic en
+                    "Run".</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copySQLToClipboard() {
+            const sqlCode = document.getElementById('sqlCode').textContent;
+            const button = document.querySelector('.copy-button');
+
+            navigator.clipboard.writeText(sqlCode).then(() => {
+                button.textContent = '✅ ¡Copiado!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '📋 Copiar SQL';
+                    button.classList.remove('copied');
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+
+</html>
