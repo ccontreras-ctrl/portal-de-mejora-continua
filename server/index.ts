@@ -47,8 +47,8 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 // Notification endpoint
 app.post('/api/notify', async (req, res) => {
     try {
-        const { ticket, type, recipientEmail } = req.body;
-        await sendNotificationEmail(ticket, type, recipientEmail);
+        const { ticket, type, recipientEmail, authorName, commentContent } = req.body;
+        await sendNotificationEmail(ticket, type, recipientEmail, { authorName, commentContent });
         res.json({ success: true });
     } catch (error) {
         console.error('Error sending notification:', error);
@@ -57,7 +57,7 @@ app.post('/api/notify', async (req, res) => {
 });
 
 // Serve frontend static files
-const distPath = path.join(__dirname, '../../dist');
+const distPath = path.join(__dirname, '../../../dist');
 app.use(express.static(distPath));
 
 // For SPA: any other route should serve index.html

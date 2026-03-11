@@ -22,6 +22,7 @@ const fromSupabase = (ticketData: any): Ticket => ({
   asignadoAId: ticketData.asignado_a_id,
   driveFolderUrl: ticketData.drive_folder_url,
   ishikawaData: ticketData.ishikawa_data,
+  geminiAnalysis: ticketData.gemini_analysis,
 });
 
 const toSupabase = (ticket: Partial<Ticket>) => {
@@ -41,6 +42,7 @@ const toSupabase = (ticket: Partial<Ticket>) => {
   if (ticket.asignadoAId !== undefined) data.asignado_a_id = ticket.asignadoAId;
   if (ticket.driveFolderUrl !== undefined) data.drive_folder_url = ticket.driveFolderUrl;
   if (ticket.ishikawaData !== undefined) data.ishikawa_data = ticket.ishikawaData;
+  if (ticket.geminiAnalysis !== undefined) data.gemini_analysis = ticket.geminiAnalysis;
   return data;
 };
 
@@ -105,12 +107,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
             // Validate domain
             if (!userEmail.endsWith(`@${allowedDomain}`)) {
-              console.error(`❌ Acceso denegado: solo usuarios de @${allowedDomain} pueden acceder`);
+              console.error(`❌ Acceso denegado: el correo ${userEmail} no pertenece al dominio @${allowedDomain}`);
+              alert(`Acceso denegado: Solo usuarios con correo @${allowedDomain} pueden acceder a este portal. Tu correo actual es: ${userEmail}`);
               await supabase.auth.signOut();
-              alert(`Solo usuarios con correo @${allowedDomain} pueden acceder a este portal.`);
               setUser(null);
               return;
             }
+            console.log(`✅ Dominio validado para: ${userEmail}`);
 
             console.log("👤 AppContext: Buscando perfil en base de datos...");
             const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
@@ -308,8 +311,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ticket_id: comment.ticketId,
       author_id: comment.authorId
     });
-    if (error) console.error("Error adding comment", error);
-  }, []);
+
+    if (error) {
+      console.error("Error adding comment", error);
+    } else {
+      // Notify via email
+      try {
+        const ticket = tickets.find(t => t.id === comment.ticketId);
+        if (ticket) {
+          const author = users.find(u => u.id === comment.authorId);
+          console.log('📧 AppContext: Notificando nuevo comentario...');
+          await fetch(`${window.location.origin}/api/notify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ticket,
+              commentContent: comment.content,
+              authorName: author?.name || 'Un usuario',
+              type: 'comment',
+              recipientEmail: user?.id === ticket.solicitanteId ? ticket.aprobadorEmail : (users.find(u => u.id === ticket.solicitanteId)?.email || ticket.aprobadorEmail)
+            })
+          });
+        }
+      } catch (err) {
+        console.error("Error sending comment notification:", err);
+      }
+    }
+  }, [tickets, users, user]);
 
 
   const updateUserProfile = async (userId: string, updates: Partial<User>) => {

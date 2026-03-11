@@ -76,6 +76,7 @@ export interface Ticket {
   asignadoAId?: string; // Corresponds to asignado_a_id
   driveFolderUrl: string; // Corresponds to drive_folder_url
   ishikawaData: IshikawaData; // Corresponds to ishikawa_data
+  geminiAnalysis?: string; // Corresponds to gemini_analysis
   // Comments, attachments, meetings will be handled in separate tables/fetches
   comments?: Comment[];
   attachments?: Attachment[];

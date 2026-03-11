@@ -11,16 +11,16 @@
 
 3. **Agrega estas URLs en "Redirect URLs"**:
 
-   ```
-   https://portal-de-mejora-continua-682575749366.us-west1.run.app
-   http://localhost:3000
-   ```
+   <https://portal-de-mejora-continua-biapbgtcja-uw.a.run.app>
+   <http://localhost:3000>
+
+    ```
 
 4. **Configura "Site URL"**:
 
-   ```
-   https://portal-de-mejora-continua-682575749366.us-west1.run.app
-   ```
+   <https://portal-de-mejora-continua-biapbgtcja-uw.a.run.app>
+
+    ```
 
 5. **Guarda los cambios**
 
@@ -46,7 +46,7 @@
 
       ```
       https://dqpxgwsdfclmztslstzh.supabase.co
-      https://portal-de-mejora-continua-682575749366.us-west1.run.app
+      https://portal-de-mejora-continua-biapbgtcja-uw.a.run.app
       http://localhost:3000
       ```
 

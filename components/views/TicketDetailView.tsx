@@ -18,8 +18,9 @@ const TicketDetailView: React.FC<{ ticketId: string }> = ({ ticketId }) => {
     const ticket = tickets.find(t => t.id === ticketId);
 
     const [isAnalysisModalOpen, setAnalysisModalOpen] = useState(false);
-    const [analysisResult, setAnalysisResult] = useState('');
+    const [analysisResult, setAnalysisResult] = useState(ticket.geminiAnalysis || '');
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [isSavingAnalysis, setIsSavingAnalysis] = useState(false);
 
     if (!ticket) {
         return <Card>Ticket no encontrado.</Card>;
@@ -36,6 +37,12 @@ const TicketDetailView: React.FC<{ ticketId: string }> = ({ ticketId }) => {
         const result = await analyzeTicketWithGemini(ticket);
         setAnalysisResult(result);
         setIsAnalyzing(false);
+    };
+
+    const handleSaveAnalysis = async () => {
+        setIsSavingAnalysis(true);
+        await updateTicket({ id: ticket.id, geminiAnalysis: analysisResult });
+        setIsSavingAnalysis(false);
     };
 
     const handleStatusChange = (newStatus: TicketStatus) => {
@@ -110,6 +117,18 @@ const TicketDetailView: React.FC<{ ticketId: string }> = ({ ticketId }) => {
                     <h3 className="font-semibold text-base text-gray-800 mb-2">Impacto Declarado</h3>
                     <p className="text-gray-600 whitespace-pre-wrap">{ticket.impacto}</p>
                 </div>
+
+                {ticket.geminiAnalysis && (
+                    <div className="mt-6 border-t pt-4 bg-blue-50/30 rounded-lg p-4">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="font-bold text-base text-primary flex items-center">
+                                <SparklesIcon /> Análisis de Gemini AI
+                            </h3>
+                            <Badge content="Guardado" variant="info" />
+                        </div>
+                        <div className="text-gray-700 text-sm prose prose-blue max-w-none" dangerouslySetInnerHTML={{ __html: ticket.geminiAnalysis.replace(/\n/g, '<br />') }} />
+                    </div>
+                )}
             </Card>
 
             {canWorkOnTicket && <IshikawaDiagram data={ticket.ishikawaData} onUpdate={handleIshikawaUpdate} />}
@@ -120,10 +139,18 @@ const TicketDetailView: React.FC<{ ticketId: string }> = ({ ticketId }) => {
                 {isAnalyzing ? (
                     <div className="flex flex-col items-center justify-center h-48">
                         <Spinner />
-                        <p className="mt-4 text-gray-600">Analizando ticket...</p>
+                        <p className="mt-4 text-gray-600">Analizando ticket con Inteligencia Artificial...</p>
                     </div>
                 ) : (
-                    <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: analysisResult.replace(/\n/g, '<br />') }} />
+                    <div className="space-y-4">
+                        <div className="prose max-w-none bg-slate-50 p-6 rounded-xl border border-slate-200" dangerouslySetInnerHTML={{ __html: analysisResult.replace(/\n/g, '<br />') }} />
+                        <div className="flex justify-end gap-3 mt-6">
+                            <Button variant="secondary" onClick={() => setAnalysisModalOpen(false)}>Cerrar</Button>
+                            <Button variant="success" onClick={handleSaveAnalysis} disabled={isSavingAnalysis}>
+                                {isSavingAnalysis ? 'Guardando...' : 'Guardar este Análisis en el Ticket'}
+                            </Button>
+                        </div>
+                    </div>
                 )}
             </Modal>
         </div>

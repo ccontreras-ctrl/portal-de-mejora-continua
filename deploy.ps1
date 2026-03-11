@@ -29,7 +29,7 @@ gcloud config set project $PROJECT_ID
 # Construir la imagen Docker con argumentos de construcción usando cloudbuild.yaml
 Write-Host "🔨 Construyendo imagen Docker en Cloud Build..." -ForegroundColor Cyan
 gcloud builds submit --config cloudbuild.yaml `
-  --substitutions="_VITE_SUPABASE_URL=https://dqpxgwsdfclmztslstzh.supabase.co,_VITE_SUPABASE_ANON_KEY=sb_publishable_o_849Y7sluUJzXRYz8THNw_1Q6FP8nI,_VITE_GEMINI_API_KEY=AIzaSyDekvHEDS6dVVeCb0k4liu6mdbLqJVKoAo,_VITE_ALLOWED_DOMAIN=suzuval.cl"
+  --substitutions="_VITE_SUPABASE_URL=https://dqpxgwsdfclmztslstzh.supabase.co,_VITE_SUPABASE_ANON_KEY=sb_publishable_o_849Y7sluUJzXRYz8THNw_1Q6FP8nI,_VITE_GEMINI_API_KEY=AIzaSyDbYTpOiQWE4Xza955RVGEY7C-3hBZEE0g,_VITE_ALLOWED_DOMAIN=suzuval.cl"
 
 # Desplegar en Cloud Run (limpiando volúmenes para evitar que GCS sobrescriba el código)
 Write-Host "☁️  Desplegando en Cloud Run..." -ForegroundColor Cyan
@@ -39,7 +39,7 @@ gcloud run deploy $SERVICE_NAME `
   --region $REGION `
   --allow-unauthenticated `
   --clear-volumes `
-  --set-env-vars "VITE_GEMINI_API_KEY=AIzaSyDekvHEDS6dVVeCb0k4liu6mdbLqJVKoAo,VITE_SUPABASE_URL=https://dqpxgwsdfclmztslstzh.supabase.co,VITE_SUPABASE_ANON_KEY=sb_publishable_o_849Y7sluUJzXRYz8THNw_1Q6FP8nI,VITE_ALLOWED_DOMAIN=suzuval.cl"
+  --set-env-vars "VITE_GEMINI_API_KEY=AIzaSyDbYTpOiQWE4Xza955RVGEY7C-3hBZEE0g,VITE_SUPABASE_URL=https://dqpxgwsdfclmztslstzh.supabase.co,VITE_SUPABASE_ANON_KEY=sb_publishable_o_849Y7sluUJzXRYz8THNw_1Q6FP8nI,VITE_ALLOWED_DOMAIN=suzuval.cl"
 
 Write-Host "✅ Despliegue completado!" -ForegroundColor Green
 Write-Host "✅ Despliegue completado! Revisa la URL arriba en el output de gcloud." -ForegroundColor Green

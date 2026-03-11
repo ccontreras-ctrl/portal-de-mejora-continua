@@ -17,6 +17,8 @@ const IshikawaDiagram: React.FC<IshikawaDiagramProps> = ({ data, onUpdate }) => 
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [newCause, setNewCause] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSavedMsg, setShowSavedMsg] = useState(false);
 
   const handleAddCauseClick = (category: string) => {
     setCurrentCategory(category);
@@ -41,11 +43,26 @@ const IshikawaDiagram: React.FC<IshikawaDiagramProps> = ({ data, onUpdate }) => 
     onUpdate(newData);
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    await onUpdate(data);
+    setIsSaving(false);
+    setShowSavedMsg(true);
+    setTimeout(() => setShowSavedMsg(false), 3000);
+  };
+
   const categoriesTop = ISHIKAWA_CATEGORIES.slice(0, 3);
   const categoriesBottom = ISHIKAWA_CATEGORIES.slice(3, 6);
 
   return (
-    <Card title="Diagrama de Causa y Efecto (Ishikawa)">
+    <Card title="Diagrama de Causa y Efecto (Ishikawa)" extra={
+      <div className="flex items-center gap-4">
+        {showSavedMsg && <span className="text-success text-sm font-medium animate-pulse">¡Cambios guardados!</span>}
+        <Button onClick={handleSave} variant="success" size="sm" disabled={isSaving}>
+          {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+        </Button>
+      </div>
+    }>
       <div className="w-full overflow-x-auto">
         <svg viewBox="0 0 800 400" className="min-w-[800px]">
           {/* Main Spine & Head */}

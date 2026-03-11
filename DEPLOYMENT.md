@@ -1,6 +1,7 @@
 # Guía de Despliegue en Cloud Run
 
 ## Prerequisitos
+
 - Google Cloud SDK instalado
 - Proyecto de Google Cloud configurado
 - Permisos para Cloud Run
@@ -11,12 +12,12 @@
 
 **IMPORTANTE**: Antes de desplegar, debes configurar las URLs de redirección en Supabase:
 
-1. Ve a tu proyecto en Supabase: https://app.supabase.com
+1. Ve a tu proyecto en Supabase: <https://app.supabase.com>
 2. Ve a Authentication > URL Configuration
 3. Agrega estas URLs a "Redirect URLs":
-   - `https://portal-de-mejora-continua-682575749366.us-west1.run.app`
+   - `https://portal-de-mejora-continua-biapbgtcja-uw.a.run.app`
    - `http://localhost:3000` (para desarrollo local)
-4. En "Site URL" configura: `https://portal-de-mejora-continua-682575749366.us-west1.run.app`
+4. En "Site URL" configura: `https://portal-de-mejora-continua-biapbgtcja-uw.a.run.app`
 
 ### 2. Configurar Google OAuth Provider en Supabase
 
@@ -75,13 +76,16 @@ npm run preview
 ## Solución de Problemas
 
 ### Error: "Redirect URL not allowed"
+
 - Verifica que la URL esté configurada en Supabase > Authentication > URL Configuration
 
 ### Error: "Access denied - domain not allowed"
+
 - Solo usuarios con correo @suzuval.cl pueden acceder
 - Verifica que la variable VITE_ALLOWED_DOMAIN esté configurada correctamente
 
 ### Error: La página se cae después del login
+
 - Verifica que las URLs de redirección en Supabase coincidan exactamente con tu URL de Cloud Run
 - Revisa los logs de Cloud Run: `gcloud run logs read portal-de-mejora-continua --region us-west1`
 

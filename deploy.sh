@@ -42,5 +42,4 @@ gcloud run deploy ${SERVICE_NAME} \
   --port 8080 \
   --set-env-vars VITE_GEMINI_API_KEY=AIzaSyDekvHEDS6dVVeCb0k4liu6mdbLqJVKoAo,VITE_SUPABASE_URL=https://dqpxgwsdfclmztslstzh.supabase.co,VITE_SUPABASE_ANON_KEY=sb_publishable_o_849Y7sluUJzXRYz8THNw_1Q6FP8nI,VITE_ALLOWED_DOMAIN=suzuval.cl
 
-echo "✅ Despliegue completado!"
-echo "🌐 URL: https://portal-de-mejora-continua-682575749366.us-west1.run.app"
+echo "🌐 URL: https://portal-de-mejora-continua-biapbgtcja-uw.a.run.app"

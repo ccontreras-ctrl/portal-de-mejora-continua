@@ -15,9 +15,8 @@ const NavLink: React.FC<{ icon: React.ReactElement; label: string; page: string;
     return (
         <button
             onClick={handleClick}
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors duration-200 rounded-lg ${
-                isActive ? 'bg-white/20 text-white font-semibold' : 'text-gray-200 hover:bg-white/10 hover:text-white'
-            }`}
+            className={`flex items-center w-full px-4 py-3 text-left transition-colors duration-200 rounded-lg ${isActive ? 'bg-white/20 text-white font-semibold' : 'text-gray-200 hover:bg-white/10 hover:text-white'
+                }`}
         >
             <span className="mr-3">{icon}</span>
             {label}
@@ -32,22 +31,34 @@ const AdminIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w
 
 const Sidebar: React.FC = () => {
     const { user } = useAuth();
-    const canCreate = [Role.Solicitante, Role.JefeDirecto, Role.Administrador].includes(user!.role);
-    const canSeeReports = [Role.JefeDirecto, Role.MejoraContinua, Role.Administrador].includes(user!.role);
-    const isAdmin = user!.role === Role.Administrador;
+    if (!user) return null;
+
+    const canCreate = [Role.Solicitante, Role.JefeDirecto, Role.Administrador].includes(user.role);
+    const canSeeReports = [Role.JefeDirecto, Role.MejoraContinua, Role.Administrador].includes(user.role);
+    const isAdmin = user.role === Role.Administrador;
 
     return (
-        <aside className="w-64 bg-gradient-to-b from-primary to-accent text-white flex flex-col">
-            <div className="p-4 border-b border-white/20">
-                <h2 className="text-xl font-semibold text-white">{user?.name}</h2>
-                <span className="inline-block bg-white/20 text-xs px-2 py-1 rounded-full mt-1">{user?.role}</span>
+        <aside className="w-64 glass-sidebar text-white flex flex-col z-20">
+            <div className="p-6 border-b border-white/10 mb-4 bg-white/5">
+                <div className="w-12 h-12 bg-brand-cyan rounded-xl flex items-center justify-center mb-3 shadow-lg shadow-brand-cyan/20">
+                    <span className="text-xl font-bold">{user.name.charAt(0)}</span>
+                </div>
+                <h2 className="text-lg font-bold text-white truncate">{user.name}</h2>
+                <div className="flex items-center mt-1">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse" />
+                    <span className="text-[10px] uppercase tracking-wider text-blue-200 font-semibold">{user.role}</span>
+                </div>
             </div>
-            <nav className="flex-1 p-4 flex flex-col space-y-2">
+            <nav className="flex-1 px-4 flex flex-col space-y-1">
                 <NavLink icon={<DashboardIcon />} label="Dashboard" page="dashboard" />
                 {canCreate && <NavLink icon={<CreateIcon />} label="Crear Ticket" page="create-ticket" />}
                 {canSeeReports && <NavLink icon={<ReportsIcon />} label="Reportes" page="reports" />}
                 {isAdmin && <NavLink icon={<AdminIcon />} label="Administración" page="admin" />}
             </nav>
+            <div className="p-6 mt-auto border-t border-white/10 bg-white/5">
+                <p className="text-[10px] text-blue-300 font-medium tracking-tight">Portal Mejora Continua</p>
+                <p className="text-[10px] text-blue-400/60 mt-0.5">Suzuval v1.5</p>
+            </div>
         </aside>
     );
 };
